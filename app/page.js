@@ -1,14 +1,15 @@
 'use client'
 import { useState } from 'react'
-import MyEditor from '@/components/WYSIWYGEditor'
+import MyEditor from '../components/QLEditor'
 
 export default function Home() {
   const [apiKey, setApiKey] = useState(
-    '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'
+    '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'
   )
-  const [keywords, setKeywords] = useState('')
+  const [keywords, setKeywords] = useState('Bamboo Charcoal')
   const [content, setContent] = useState('')
-  // const [serp, setSerp] = useState('')
+  const [metaRecommendation, setMetaRecommendation] = useState('')
+  const [totalTokensUsed, setTotalTokensUsed] = useState('')
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -22,7 +23,18 @@ export default function Home() {
     })
 
     const result = await response.json()
-    setContent(result.data.choices[0].text.trim())
+    // setContent(result.data.choices[0].text.trim())
+    setContent(result.content)
+    setTotalTokensUsed(result.totalTokensUsed)
+
+    const titleResponse = await fetch('/api/meta', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ apiKey, keywords }),
+    })
+    setMetaRecommendation(titleResponse.titleHtml)
   }
   return (
     <main className="flex flex-col items-center justify-between p-24">
@@ -54,7 +66,12 @@ export default function Home() {
           className="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
         />
       </form>
+      <div className="text-right w-full font-black">{totalTokensUsed}</div>
 
+      <div
+        className="m-4 p-4 border rounded-lg"
+        dangerouslySetInnerHTML={{ __html: metaRecommendation }}
+      ></div>
       {content && <MyEditor initialContent={content} />}
     </main>
   )
