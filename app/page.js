@@ -4,7 +4,7 @@ import MyEditor from '../components/QLEditor'
 
 export default function Home() {
   const [apiKey, setApiKey] = useState(
-    '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'
+    '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'
   )
   const [keywords, setKeywords] = useState('Bamboo Charcoal')
   const [content, setContent] = useState('')
